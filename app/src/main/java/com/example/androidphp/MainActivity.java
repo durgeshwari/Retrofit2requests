@@ -1,6 +1,9 @@
 package com.example.androidphp;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private jsonPlaceHolderinterface jsonplaceholder;
     private TextView textView;
+    private EditText editText;
+    Button submit_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textView=findViewById(R.id.text_view_result);
+        editText=findViewById(R.id.namefield);
+        submit_btn=findViewById(R.id.submitbtn);
+        submit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createPost();
+            }
+        });
 
         Gson gson=new GsonBuilder().serializeNulls().create();
 
@@ -50,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
         jsonplaceholder= retrofit.create(jsonPlaceHolderinterface.class);
         // getPosts();
      //   getComments();
-        //createPost();
-       updateRequest();
+       createPost();
+     //  updateRequest();
        // deletePost();
 
     }
@@ -103,10 +116,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void createPost() {
-    Posts posts=new Posts(23,"New title", "New text");
+        String names=editText.getText().toString();
+    Posts posts=new Posts(23,"New title", names);
 
 //    Call<Posts> call=jsonplaceholder.createPost(posts);
-        Call<Posts> call=jsonplaceholder.createPost(23,"new title","new tetx" + "");
+        Call<Posts> call=jsonplaceholder.createPost(23,"new title",names + "");
 
     call.enqueue(new Callback<Posts>() {
         @Override
@@ -120,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
 
                 String content = "";
                 content += "Code: " + response.code() + "\n";
-                content += "ID: " + postResponse.getId() + "\n";
-                content += "User ID: " + postResponse.getUserId() + "\n";
-                content += "Title: " + postResponse.getTitle() + "\n";
-                content += "Text: " + postResponse.getText() + "\n";
+              //  content += "ID: " + postResponse.getId() + "\n";
+               // content += "User ID: " + postResponse.getUserId() + "\n";
+                //content += "Title: " + postResponse.getTitle() + "\n";
+                content += "Name: " + postResponse.getText() + "\n";
                 textView.setText(content);
 
             }
