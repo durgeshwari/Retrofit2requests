@@ -20,6 +20,13 @@
         android:id="@+id/submitbtn"
         android:layout_below="@+id/namefield"/>
         />
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@+id/submitbtn"
+        />
+
+
 <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"

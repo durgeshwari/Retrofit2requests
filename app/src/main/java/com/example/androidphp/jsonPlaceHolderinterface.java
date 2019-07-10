@@ -1,5 +1,7 @@
 package com.example.androidphp;
 
+import com.example.androidphp.models.Pojo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -16,18 +18,18 @@ import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 
 public interface jsonPlaceHolderinterface {
-    @GET("posts")
-    Call<List<Posts>> getPosts(
+    @GET("wp-json/wc/v3/products/categories")
+    Call<List<Pojo>> getPosts(
             @Query("userId") Integer[] userId,
             @Query("_sort") String sort,
             @Query("_order") String order
             ) ;
 
-    @GET("posts")
-    Call<List<Posts>> getPosts(
+    @GET("wp-json/wc/v3/products/categories")
+    Call<List<Pojo>> getPosts(
             @QueryMap Map<String,String> parameter
             );
-
+//?consumer_key=ck_d5a10c7f59d92b6defed8da69096c1bf95ccfbe9&consumer_secret=cs_a0840eb6bc47952051611c0fa5e42b7854d7d223"
     @GET("posts/{id}/comments")
     Call<List<comments>> getComments(@Path("id") int postId);
 

@@ -1,12 +1,14 @@
 package com.example.androidphp;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.androidphp.models.Pojo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,7 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Credentials;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,24 +55,34 @@ public class MainActivity extends AppCompatActivity {
         HttpLoggingInterceptor httpLoggingInterceptor=new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        Interceptor interceptor = chain -> {
+            Request original = chain.request();
+            Request request = original.newBuilder()
+                    .header("Authorization", Credentials.basic("ck_d5a10c7f59d92b6defed8da69096c1bf95ccfbe9", "cs_a0840eb6bc47952051611c0fa5e42b7854d7d223"))
+                    .method(original.method(), original.body())
+                    .build();
+            return chain.proceed(request);
+        };
         OkHttpClient okHttpClient=new OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(interceptor)
                 .build();
 
         Retrofit retrofit=new Retrofit.Builder()
-                .baseUrl("https://jsonplaceholder.typicode.com/")
+                .baseUrl("https://validation.appetizers.in/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
 
         jsonplaceholder= retrofit.create(jsonPlaceHolderinterface.class);
-        // getPosts();
+         getPosts();
      //   getComments();
-       createPost();
+      // createPost();
      //  updateRequest();
        // deletePost();
 
     }
+
+
 
     private void deletePost() {
         Call<Void> call=jsonplaceholder.deletePosts(5);
@@ -102,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 String content = "";
                 content += "Code: " + response.code() + "\n";
                 content += "ID: " + postResponse.getId() + "\n";
-                content += "User ID: " + postResponse.getUserId() + "\n";
+                //content += "User ID: " + postResponse.getUserId() + "\n";
                 content += "Title: " + postResponse.getTitle() + "\n";
-                content += "Text: " + postResponse.getText() + "\n";
+               // content += "Text: " + postResponse.getText() + "\n";
                 textView.setText(content);
             }
             @Override
@@ -184,36 +199,35 @@ public class MainActivity extends AppCompatActivity {
     private void getPosts() {
 
         Map<String,String> parameter=new HashMap<>();
-        parameter.put("userId","1");
-        parameter.put("_sort","id");
-        parameter.put("_order","desc");
 
-        Call<List<Posts>> call=jsonplaceholder.getPosts(parameter);
+
+        Call<List<Pojo>> call=jsonplaceholder.getPosts(parameter);
 //       Call<List<Posts>> call=jsonplaceholder.getPosts(new Integer[]{2,3,6},"id","desc");
-        call.enqueue((new Callback<List<Posts>>() {
+        call.enqueue((new Callback<List<Pojo>>() {
             @Override
-            public void onResponse(Call<List<Posts>> call, Response<List<Posts>> response) {
+            public void onResponse(Call<List<Pojo>> call, Response<List<Pojo>> response) {
 
                 if(!response.isSuccessful()){
                     textView.setText("Code:"+response.code());
                     return;
                 }
 
-                List<Posts> posts=response.body();
+                List<Pojo> posts=response.body();
 
-                for(Posts post:posts){
+                for(Pojo post:posts){
                     String content="";
                     content+="ID: "+post.getId()+"\n";
-                    content+="User ID: "+post.getUserId()+"\n";
-                    content+="Title: "+post.getTitle()+"\n";
-                    content+="Body: "+post.getText()+"\n";
+                    content+="Name: "+post.getName()+"\n";
+//                    content+="Title: "+post.getTitle()+"\n";
+//                    content+="Body: "+post.getText()+"\n";
 
                     textView.append(content);
                 }
             }
 
+
             @Override
-            public void onFailure(Call<List<Posts>> call, Throwable t) {
+            public void onFailure(Call<List<Pojo>> call, Throwable t) {
                 textView.setText(t.getMessage());
             }
         }));
